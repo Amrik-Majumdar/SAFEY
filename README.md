@@ -80,6 +80,13 @@ http://localhost:8000
 - Optional chatbot support depends on external service configuration and should be reviewed before use.
 - This repository should not contain real trusted-contact data, user logs, API keys, worker account caches, or private environment files.
 
+Additional public-facing safeguards:
+
+- [Privacy Policy](PRIVACY.md)
+- [Terms Of Use](TERMS.md)
+- [Security Policy](SECURITY.md)
+- [Disclaimer](DISCLAIMER.md)
+
 ## Attribution and Source
 
 This repository was prepared from the collaborative SAFEY codebase for public portfolio review. The project should be credited as:
