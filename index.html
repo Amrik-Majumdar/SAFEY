@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#3C91E6">
+    <meta name="description" content="SAFEY - Discreet safety and resource platform">
+    <title>Notes</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%93%8B%3C%2Ftext%3E%3C%2Fsvg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'trust-blue': '#3C91E6',
+                        'neutral-bg': '#F4F7FB',
+                        'hopeful-teal': '#69D1C5',
+                        'alert-red': '#E25C5C',
+                        'gentle-green': '#7DD87D',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'card': '1.5rem',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        }
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .fade-out {
+            animation: fadeOut 0.1s ease-out;
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        .stealth-mode {
+            font-family: 'Courier New', monospace;
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: scale(0.97);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .card-hover:active {
+            transform: scale(0.95);
+        }
+        .btn-scale:active {
+            transform: scale(0.97);
+        }
+        .material-shadow {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .material-shadow-lg {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+        .animate-fade-in {
+            animation: slideDown 0.15s ease-out;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* Emergency Mode - start */
+        /* Slide-up animation for emergency screen */
+        #emergency-screen.active {
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* Emergency Mode - end */
+    </style>
+</head>
+<body class="bg-neutral-bg min-h-screen">
+    <!-- Home Screen -->
+    <div id="home-screen" class="screen active">
+        <div class="max-w-md mx-auto p-6">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-8 pt-4">
+                <div class="flex items-center gap-2">
+                    <svg class="w-7 h-7 text-trust-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <h1 class="text-2xl font-bold text-gray-800">SAFEY</h1>
+                </div>
+                <div class="flex gap-2">
+                    <button id="stealth-toggle" class="p-2 rounded-lg bg-white hover:bg-gray-100 transition material-shadow" title="Stealth Mode" aria-label="Activate stealth mode" data-trigger="logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                        </svg>
+                    </button>
+                    <button id="settings-btn" class="p-2 rounded-lg bg-white hover:bg-gray-100 transition material-shadow" title="Settings" aria-label="Open settings">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Greeting Section -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-1">Welcome back, you're in control.</h2>
+                <p class="text-gray-600 text-sm">Your safety starts here.</p>
+            </div>
+
+            <!-- Safety Assistant Inline Prompt -->
+            <div id="inline-chatbot-container" class="mb-8">
+                <form id="inline-chatbot-form" class="relative bg-white p-2 rounded-card material-shadow-lg flex items-center">
+                    <input type="text" id="inline-chatbot-input" class="flex-grow bg-transparent border-none focus:ring-0 text-gray-800 placeholder-gray-500 pl-3" placeholder="Ask the Safety Assistant…" aria-label="Ask Safety Assistant">
+                    <button type="submit" id="inline-chatbot-submit" class="bg-hopeful-teal text-white rounded-full w-10 h-10 flex items-center justify-center ml-2 btn-scale" aria-label="Send to Safety Assistant" disabled>
+                        <svg id="send-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                        </svg>
+                        <div id="loading-spinner" class="hidden animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Main Actions - 2x2 Grid -->
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <button id="assessment-btn" class="bg-white p-6 rounded-card material-shadow-lg card-hover flex flex-col items-center justify-center min-h-[140px] text-center" aria-label="Start safety assessment">
+                    <div class="w-12 h-12 mb-3 flex items-center justify-center rounded-full bg-trust-blue bg-opacity-10">
+                        <span class="text-2xl">🧭</span>
+                    </div>
+                    <span class="font-semibold text-gray-800 text-base">Start Assessment</span>
+                </button>
+
+                <button id="safety-plan-btn" class="bg-white p-6 rounded-card material-shadow-lg card-hover flex flex-col items-center justify-center min-h-[140px] text-center" aria-label="View your safety plan">
+                    <div class="w-12 h-12 mb-3 flex items-center justify-center rounded-full bg-hopeful-teal bg-opacity-10">
+                        <span class="text-2xl">🛡️</span>
+                    </div>
+                    <span class="font-semibold text-gray-800 text-base">My Safety Plan</span>
+                </button>
+
+                <button id="resources-btn" class="bg-white p-6 rounded-card material-shadow-lg card-hover flex flex-col items-center justify-center min-h-[140px] text-center" aria-label="Browse safety resources">
+                    <div class="w-12 h-12 mb-3 flex items-center justify-center rounded-full bg-trust-blue bg-opacity-10">
+                        <span class="text-2xl">🏠</span>
+                    </div>
+                    <span class="font-semibold text-gray-800 text-base">Resources</span>
+                </button>
+
+                <button id="emergency-btn" class="bg-white p-6 rounded-card material-shadow-lg card-hover flex flex-col items-center justify-center min-h-[140px] text-center" aria-label="Access emergency resources">
+                    <div class="w-12 h-12 mb-3 flex items-center justify-center rounded-full bg-alert-red bg-opacity-10">
+                        <span class="text-2xl">🚨</span>
+                    </div>
+                    <span class="font-semibold text-gray-800 text-base">Emergency Mode</span>
+                </button>
+            </div>
+
+            <!-- Info Section -->
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-500">
+                    Your data stays private and offline.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Risk Assessment Screen -->
+    <div id="assessment-screen" class="screen">
+        <div class="max-w-md mx-auto p-6">
+            <div class="flex items-center mb-6 pt-4">
+                <button id="assessment-back" class="p-2 hover:bg-white hover:material-shadow rounded-lg transition" aria-label="Go back to home">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <div class="ml-3">
+                    <h2 class="text-xl font-bold text-gray-800">Personal Safety Check</h2>
+                    <p class="text-sm text-gray-600">Answer honestly — this stays on your device.</p>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mb-8">
+                <div class="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                    <div id="progress-bar" class="h-1.5 rounded-full transition-all duration-300 bg-gradient-to-r from-trust-blue to-hopeful-teal" style="width: 0%"></div>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">Question <span id="current-question">1</span> of <span id="total-questions">8</span></p>
+            </div>
+
+            <!-- Question Container -->
+            <div id="question-container" class="space-y-6">
+                <!-- Questions will be inserted here by JavaScript -->
+            </div>
+
+            <!-- Results Container -->
+            <div id="results-container" class="hidden">
+                <div class="bg-white rounded-card material-shadow-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Your Assessment Results</h3>
+                    <div id="risk-score-display" class="mb-6"></div>
+                    <div id="risk-guidance" class="text-gray-700"></div>
+                </div>
+                <button id="view-plan-from-results" class="w-full bg-trust-blue hover:bg-opacity-90 text-white font-semibold py-4 px-6 rounded-card mb-3 transition btn-scale" aria-label="View your safety plan">
+                    Generate My Safety Plan
+                </button>
+                <button id="view-resources-from-results" class="w-full bg-hopeful-teal hover:bg-opacity-90 text-white font-semibold py-4 px-6 rounded-card mb-3 transition btn-scale" aria-label="View local resources">
+                    View Local Resources
+                </button>
+                <button id="restart-assessment" class="w-full bg-white text-gray-700 border border-gray-300 font-semibold py-3 px-6 rounded-card transition hover:bg-gray-50 btn-scale" aria-label="Retake assessment">
+                    Take Assessment Again
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Safety Plan Screen -->
+    <div id="safety-plan-screen" class="screen">
+        <div class="max-w-md mx-auto p-6">
+            <div class="flex items-center mb-6 pt-4">
+                <button id="plan-back" class="p-2 hover:bg-white hover:material-shadow rounded-lg transition" aria-label="Go back to home">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <div class="ml-3">
+                    <h2 class="text-xl font-bold text-gray-800">Your Personalized Safety Plan</h2>
+                    <p class="text-sm text-gray-600">Edit and save steps you feel comfortable with.</p>
+                </div>
+            </div>
+
+            <div id="safety-plan-content" class="space-y-4 mb-20">
+                <!-- Plan sections will be inserted here -->
+            </div>
+
+            <!-- Floating Action Button -->
+            <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2">
+                <button id="export-plan" class="block bg-trust-blue hover:bg-opacity-90 text-white font-semibold py-3 px-6 rounded-full material-shadow-lg transition btn-scale flex items-center gap-2" aria-label="Download safety plan as PDF">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Download as PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resources Screen -->
+    <div id="resources-screen" class="screen">
+        <div class="max-w-md mx-auto p-6">
+            <div class="flex items-center mb-6 pt-4">
+                <button id="resources-back" class="p-2 hover:bg-white hover:material-shadow rounded-lg transition" aria-label="Go back to home">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <h2 class="text-xl font-bold ml-3 text-gray-800">Resources</h2>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="mb-4">
+                <div class="relative">
+                    <input type="text" id="resource-search" placeholder="Find nearby shelters, legal aid, or hotlines" class="w-full px-4 py-3 pl-11 bg-white rounded-card border border-gray-200 focus:outline-none focus:ring-2 focus:ring-trust-blue focus:border-transparent" aria-label="Search resources">
+                    <svg class="absolute left-3 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Category Tabs -->
+            <div class="mb-6 flex gap-2 flex-wrap">
+                <button class="filter-btn active px-4 py-2 rounded-full text-sm font-semibold bg-trust-blue text-white transition" data-category="all" aria-label="Show all resources">All</button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-gray-700 hover:bg-gray-100 material-shadow transition" data-category="hotline" aria-label="Show hotlines">Hotlines</button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-gray-700 hover:bg-gray-100 material-shadow transition" data-category="shelter" aria-label="Show shelters">Shelters</button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-gray-700 hover:bg-gray-100 material-shadow transition" data-category="legal" aria-label="Show legal aid">Legal</button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-gray-700 hover:bg-gray-100 material-shadow transition" data-category="counseling" aria-label="Show counseling">Counseling</button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-gray-700 hover:bg-gray-100 material-shadow transition" data-category="financial" aria-label="Show financial aid">Financial</button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-gray-700 hover:bg-gray-100 material-shadow transition" data-category="child-services" aria-label="Show child services">Child Services</button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-gray-700 hover:bg-gray-100 material-shadow transition" data-category="lgbtq" aria-label="Show LGBTQ+ resources">LGBTQ+</button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-gray-700 hover:bg-gray-100 material-shadow transition" data-category="tech-safety" aria-label="Show tech safety resources">Tech Safety</button>
+            </div>
+
+            <!-- Offline Banner (hidden by default) -->
+            <div id="offline-banner" class="hidden mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-card">
+                <p class="text-sm text-yellow-800 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Offline mode: showing saved resources
+                </p>
+            </div>
+
+            <!-- Resource List -->
+            <div id="resource-list" class="space-y-4">
+                <!-- Resources will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot Screen -->
+    <div id="chatbot-screen" class="screen">
+        <div class="max-w-md mx-auto p-6">
+            <div class="flex items-center mb-6 pt-4">
+                <button id="chatbot-back" class="p-2 hover:bg-white hover:material-shadow rounded-lg transition" aria-label="Go back to home">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <div class="ml-3">
+                    <h2 class="text-xl font-bold text-gray-800">Safety Assistant</h2>
+                    <p class="text-sm text-gray-600">Talk to our AI safety assistant</p>
+                </div>
+            </div>
+
+            <!-- Chat Container -->
+            <div id="chat-container" class="bg-white rounded-card material-shadow-lg p-4 mb-4 h-96 overflow-y-auto">
+                <div id="chat-messages" class="space-y-4">
+                    <!-- Messages will be inserted here -->
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 bg-hopeful-teal rounded-full flex items-center justify-center flex-shrink-0">
+                            <span class="text-sm">🤖</span>
+                        </div>
+                        <div class="bg-neutral-bg rounded-lg p-3 max-w-xs">
+                            <p class="text-sm text-gray-700">Hi! I'm here to help you with safety concerns. You can ask me about resources, safety planning, or just talk about what's on your mind. Everything stays private on your device.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Key Setup (shown when not configured) -->
+            <div id="api-key-setup" class="hidden bg-yellow-50 border border-yellow-200 rounded-card p-4 mb-4">
+                <h3 class="font-semibold text-gray-800 mb-2">Set up Groq API Key (Optional)</h3>
+                <p class="text-sm text-gray-600 mb-3">The chatbot is pre-configured with a default API key. You can optionally provide your own Groq API key for enhanced privacy.</p>
+                <div class="bg-orange-50 border border-orange-200 rounded-lg p-3 mb-3">
+                    <p class="text-xs text-orange-800">
+                        <strong>Privacy Notice:</strong> Chat messages will be sent to Groq's servers for processing. While SAFEY stores all other data locally and encrypted, this feature requires external API communication.
+                    </p>
+                </div>
+                <div class="space-y-3">
+                    <input type="password" id="groq-api-key" placeholder="gsk-..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-blue" aria-label="Enter Groq API key">
+                    <button id="save-api-key" class="w-full bg-trust-blue hover:bg-opacity-90 text-white font-semibold py-2 px-4 rounded-lg transition">Save Custom API Key</button>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">Get your API key from <a href="https://console.groq.com/keys" target="_blank" class="text-trust-blue underline">Groq Console</a></p>
+            </div>
+
+            <!-- Message Input -->
+            <div class="flex gap-2">
+                <input type="text" id="chat-input" placeholder="Type your message..." class="flex-1 px-4 py-3 border border-gray-300 rounded-card focus:outline-none focus:ring-2 focus:ring-trust-blue focus:border-transparent" aria-label="Type your message">
+                <button id="send-message" class="px-4 py-3 bg-hopeful-teal hover:bg-opacity-90 text-white font-semibold rounded-card transition btn-scale disabled:opacity-50 disabled:cursor-not-allowed" aria-label="Send message">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div id="chat-loading" class="hidden mt-4 text-center">
+                <div class="inline-flex items-center gap-2 text-gray-600">
+                    <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-trust-blue"></div>
+                    <span class="text-sm">Thinking...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stealth Mode (Fake Calculator) -->
+    <div id="stealth-screen" class="screen stealth-mode">
+        <div class="max-w-md mx-auto p-4 h-screen bg-gray-900 text-white">
+            <div class="h-full flex flex-col">
+                <div class="text-right p-4 text-3xl font-mono mb-4 bg-gray-800 rounded">
+                    <div id="calc-display" class="min-h-12">0</div>
+                </div>
+                <div class="grid grid-cols-4 gap-2 flex-1">
+                    <button class="calc-btn bg-gray-700 hover:bg-gray-600 rounded text-xl font-bold py-4" data-value="7">7</button>
+                    <button class="calc-btn bg-gray-700 hover:bg-gray-600 rounded text-xl font-bold py-4" data-value="8">8</button>
+                    <button class="calc-btn bg-gray-700 hover:bg-gray-600 rounded text-xl font-bold py-4" data-value="9">9</button>
+                    <button class="calc-btn bg-orange-600 hover:bg-orange-500 rounded text-xl font-bold py-4" data-value="/">÷</button>
+                    <button class="calc-btn bg-gray-700 hover:bg-gray-600 rounded text-xl font-bold py-4" data-value="4">4</button>
+                    <button class="calc-btn bg-gray-700 hover:bg-gray-600 rounded text-xl font-bold py-4" data-value="5">5</button>
+                    <button class="calc-btn bg-gray-700 hover:bg-gray-600 rounded text-xl font-bold py-4" data-value="6">6</button>
+                    <button class="calc-btn bg-orange-600 hover:bg-orange-500 rounded text-xl font-bold py-4" data-value="*">×</button>
+                    <button class="calc-btn bg-gray-700 hover:bg-gray-600 rounded text-xl font-bold py-4" data-value="1">1</button>
+                    <button class="calc-btn bg-gray-700 hover:bg-gray-600 rounded text-xl font-bold py-4" data-value="2">2</button>
+                    <button class="calc-btn bg-gray-700 hover:bg-gray-600 rounded text-xl font-bold py-4" data-value="3">3</button>
+                    <button class="calc-btn bg-orange-600 hover:bg-orange-500 rounded text-xl font-bold py-4" data-value="-">−</button>
+                    <button class="calc-btn bg-gray-700 hover:bg-gray-600 rounded text-xl font-bold py-4" data-value="0">0</button>
+                    <button class="calc-btn bg-gray-700 hover:bg-gray-600 rounded text-xl font-bold py-4" data-value=".">.</button>
+                    <button class="calc-btn bg-green-600 hover:bg-green-500 rounded text-xl font-bold py-4" data-value="=">=</button>
+                    <button class="calc-btn bg-orange-600 hover:bg-orange-500 rounded text-xl font-bold py-4" data-value="+">+</button>
+                    <button id="calc-unlock" class="col-span-4 bg-red-600 hover:bg-red-500 rounded text-sm font-bold py-2 mt-2">C</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Mode - start -->
+    <!-- Emergency Screen -->
+    <div id="emergency-screen" class="screen">
+        <div class="max-w-md mx-auto p-6">
+            <div class="flex items-center mb-6 pt-4">
+                <button id="emergency-back" class="p-2 hover:bg-white hover:material-shadow rounded-lg transition" aria-label="Go back to home">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <div class="ml-3">
+                    <h2 class="text-xl font-bold text-gray-800">Emergency Mode</h2>
+                    <p class="text-sm text-gray-600">Quick access to emergency resources</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <!-- Primary: Call 911 -->
+                <a href="tel:911" class="emergency-call-btn block w-full bg-alert-red hover:bg-opacity-90 text-white font-bold py-6 px-6 rounded-card material-shadow-lg transition btn-scale text-center text-xl" aria-label="Call 911 emergency services">
+                    <div class="flex items-center justify-center gap-3">
+                        <span class="text-3xl">📞</span>
+                        <span>Call 911</span>
+                    </div>
+                </a>
+
+                <!-- Secondary: Text Trusted Contact -->
+                <button id="text-trusted-contact" class="emergency-secondary-btn w-full bg-hopeful-teal hover:bg-opacity-90 text-white font-semibold py-4 px-6 rounded-card material-shadow transition btn-scale" aria-label="Send alert to trusted contact">
+                    <div class="flex items-center justify-center gap-2">
+                        <span class="text-xl">💬</span>
+                        <span>Text Trusted Contact</span>
+                    </div>
+                </button>
+
+                <!-- Tertiary: View Nearby Resources -->
+                <button id="view-nearby-resources" class="emergency-secondary-btn w-full bg-trust-blue hover:bg-opacity-90 text-white font-semibold py-4 px-6 rounded-card material-shadow transition btn-scale" aria-label="View nearby safety resources">
+                    <div class="flex items-center justify-center gap-2">
+                        <span class="text-xl">🏠</span>
+                        <span>View Nearby Resources</span>
+                    </div>
+                </button>
+
+                <!-- Silent Mode Toggle -->
+                <div class="bg-white p-4 rounded-card material-shadow mt-6">
+                    <label class="flex items-center justify-between cursor-pointer">
+                        <div>
+                            <span class="text-sm font-semibold text-gray-700">Silent Emergency Mode</span>
+                            <p class="text-xs text-gray-500 mt-1">Activate emergency without visible changes</p>
+                        </div>
+                        <input type="checkbox" id="silent-mode-toggle" class="rounded border-gray-300 text-trust-blue focus:ring-trust-blue">
+                    </label>
+                </div>
+
+                <!-- Info Section -->
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                    <p class="text-xs text-blue-800">
+                        <strong>Silent Mode:</strong> When enabled, you can trigger a silent emergency by triple-tapping the bottom-right corner of the screen. This will log the event without any visible changes.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Emergency Mode - end -->
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-card max-w-md w-full mx-4 p-6 material-shadow-lg">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-800">Settings</h3>
+                <button id="close-settings" class="p-2 hover:bg-gray-100 rounded-lg transition" aria-label="Close settings">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="space-y-5 max-h-[70vh] overflow-y-auto px-3">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">PIN Length</label>
+                    <select id="pin-length-select" class="w-full px-4 py-3 border border-gray-300 rounded-card focus:outline-none focus:ring-2 focus:ring-trust-blue focus:border-transparent" aria-label="Select PIN length">
+                        <option value="6" selected>6 digits (Recommended)</option>
+                        <option value="7">7 digits</option>
+                        <option value="8">8 digits (Maximum)</option>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1.5">Longer PINs are more secure but take longer to enter</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Stealth Mode PIN</label>
+                    <input type="password" id="pin-input" class="w-full px-4 py-3 border border-gray-300 rounded-card focus:outline-none focus:ring-2 focus:ring-trust-blue focus:border-transparent" placeholder="Enter 6-digit PIN" maxlength="6" aria-label="Set unlock PIN">
+                    <p class="text-xs text-gray-500 mt-1.5">Used to unlock stealth mode. Current PIN: ****</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Disguise Template</label>
+                    <select id="disguise-template" class="w-full px-4 py-3 border border-gray-300 rounded-card focus:outline-none focus:ring-2 focus:ring-trust-blue focus:border-transparent" aria-label="Select disguise template">
+                        <option value="calculator">Calculator</option>
+                        <option value="notes">Notes</option>
+                        <option value="weather">Weather</option>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1.5">Choose how SAFEY appears in stealth mode</p>
+                    <p id="template-unlock-hint" class="text-xs text-blue-600 font-medium mt-1 hidden"></p>
+                </div>
+
+                <div id="custom-url-section" class="hidden">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Custom URL (HTTPS only)</label>
+                    <input type="url" id="custom-url-input" class="w-full px-4 py-3 border border-gray-300 rounded-card focus:outline-none focus:ring-2 focus:ring-trust-blue focus:border-transparent" placeholder="https://example.com" aria-label="Enter custom URL">
+                    <button id="save-custom-url" class="w-full mt-2 bg-trust-blue hover:bg-opacity-90 text-white font-semibold py-2 px-4 rounded-lg transition">
+                        Save Custom URL
+                    </button>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Auto-Lock Timeout</label>
+                    <select id="autolock-timeout" class="w-full px-4 py-3 border border-gray-300 rounded-card focus:outline-none focus:ring-2 focus:ring-trust-blue focus:border-transparent" aria-label="Select auto-lock timeout">
+                        <option value="1">1 minute</option>
+                        <option value="2">2 minutes</option>
+                        <option value="5" selected>5 minutes</option>
+                        <option value="10">10 minutes</option>
+                        <option value="15">15 minutes</option>
+                        <option value="30">30 minutes</option>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1.5">Automatically activate stealth after inactivity</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">Activation Triggers</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+                            <span class="text-sm text-gray-700">Corner multi-tap</span>
+                            <input type="checkbox" id="trigger-corner" checked class="rounded border-gray-300 text-trust-blue focus:ring-trust-blue">
+                        </label>
+                    </div>
+                </div>
+
+                <div id="corner-tap-config">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Corner Tap Settings</label>
+                    <div class="grid grid-cols-2 gap-3 mb-2">
+                        <select id="corner-position" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-blue text-sm">
+                            <option value="top-right">Top Right</option>
+                            <option value="top-left">Top Left</option>
+                            <option value="bottom-right">Bottom Right</option>
+                            <option value="bottom-left">Bottom Left</option>
+                        </select>
+                        <select id="corner-taps" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-blue text-sm">
+                            <option value="3">3 taps</option>
+                            <option value="4" selected>4 taps</option>
+                            <option value="5">5 taps</option>
+                            <option value="6">6 taps</option>
+                        </select>
+                    </div>
+                </div>
+
+                <hr class="border-gray-200">
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">Safety Alert Behavior</label>
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3">
+                        <p class="text-xs text-blue-800 mb-2">
+                            <strong>Smart Safety Checks:</strong> The app monitors suspicious patterns (failed unlocks, repeated emergency toggles) and classifies them by risk level.
+                        </p>
+                        <p class="text-xs text-blue-700">
+                            🟢 Low Risk: Manual confirmation only<br>
+                            🟡 Medium Risk: Manual confirmation only<br>
+                            🔴 High Risk: Auto-sends after 10 seconds (unless disabled below)
+                        </p>
+                    </div>
+                    <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+                        <div>
+                            <span class="text-sm font-medium text-gray-700">Auto-Send High-Risk Alerts</span>
+                            <p class="text-xs text-gray-500 mt-0.5">Automatically send critical safety alerts after 10s</p>
+                        </div>
+                        <input type="checkbox" id="auto-alerts-enabled" checked class="rounded border-gray-300 text-trust-blue focus:ring-trust-blue">
+                    </label>
+                    <p class="text-xs text-gray-500 mt-2">
+                        💡 When disabled, all alerts require manual confirmation ("Manual Confirmation Only" mode)
+                    </p>
+                </div>
+
+                <hr class="border-gray-200">
+
+                <!-- Trusted Contacts - start -->
+                <div id="trusted-contacts-settings">
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">Trusted Contacts</label>
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-3 text-xs text-gray-600 mb-3">
+                        Add trusted contacts to send quick alerts during emergencies. All information stays encrypted on this device.
+                    </div>
+                    <div id="trusted-contacts-list" class="space-y-3"></div>
+                    <p id="trusted-contacts-empty" class="text-xs text-gray-500">No trusted contacts yet. Add up to 5 people you can safely reach out to.</p>
+                    <form id="trusted-contact-form" class="space-y-2 mt-3" autocomplete="off">
+                        <div class="grid grid-cols-1 gap-2">
+                            <input type="text" id="trusted-contact-name" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-blue text-sm" placeholder="Contact name" aria-label="Trusted contact name">
+                            <input type="tel" id="trusted-contact-phone" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-blue text-sm" placeholder="Phone number" aria-label="Trusted contact phone">
+                        </div>
+                        <button id="add-trusted-contact" class="w-full bg-trust-blue hover:bg-opacity-90 text-white font-semibold py-2.5 px-4 rounded-lg transition text-sm" type="submit">
+                            Add Trusted Contact
+                        </button>
+                    </form>
+                    <div class="mt-4">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2" for="trusted-contact-message-template">Default Alert Message</label>
+                        <textarea id="trusted-contact-message-template" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-blue text-sm min-h-[90px]" placeholder="Write the alert message that will be shared with trusted contacts." aria-label="Trusted contact alert message"></textarea>
+                        <p class="text-xs text-gray-500 mt-1">Placeholders: <code class="font-mono">{{reason}}</code>, <code class="font-mono">{{risk}}</code>, <code class="font-mono">{{time}}</code></p>
+                        <p id="trusted-contact-template-status" class="text-xs text-green-600 mt-1 hidden">Message saved</p>
+                    </div>
+                </div>
+                <!-- Trusted Contacts - end -->
+
+                <hr class="border-gray-200">
+
+                <!-- Emergency Mode - start -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">Emergency Mode</label>
+                    <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+                        <div>
+                            <span class="text-sm font-medium text-gray-700">Enable Silent Emergency Mode</span>
+                            <p class="text-xs text-gray-500 mt-0.5">Triple-tap bottom-right corner to trigger silent emergency</p>
+                        </div>
+                        <input type="checkbox" id="silent-emergency-enabled" class="rounded border-gray-300 text-trust-blue focus:ring-trust-blue">
+                    </label>
+                    <p class="text-xs text-gray-500 mt-2">
+                        💡 When enabled, triple-tap the bottom-right corner to log a silent emergency event without visible changes
+                    </p>
+                </div>
+                <!-- Emergency Mode - end -->
+
+                <hr class="border-gray-200">
+
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">About SAFEY</h4>
+                    <p class="text-sm text-gray-600">Built to empower and protect. All data stays private on your device.</p>
+                </div>
+
+                <button id="clear-data" class="w-full bg-alert-red hover:bg-opacity-90 text-white font-semibold py-3 px-4 rounded-card transition btn-scale" aria-label="Clear all data">
+                    Clear All Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stealth Mode Scripts (load before main app) -->
+    <script src="js/logger.js"></script>
+    <script src="js/crypto-utils.js"></script>
+    <script src="js/storage-utils.js"></script>
+    <script src="js/event-logger.js"></script>
+    <script src="js/stealth-settings.js"></script>
+    <script src="js/trusted-contacts.js"></script>
+    <script src="js/lockout-manager.js"></script>
+    <script src="js/disguise-renderer.js"></script>
+    <script src="js/stealth-trigger-handler.js"></script>
+    <script src="js/unlock-handler.js"></script>
+    <script src="js/stealth-controller.js"></script>
+    <script src="js/decoy-notes-manager.js"></script>
+    <script src="js/ui-utils.js"></script>
+    <script src="js/chatbot.js"></script>
+
+    <!-- Main App Script -->
+    <script src="app.js"></script>
+</body>
+</html>
